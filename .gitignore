@@ -16,8 +16,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# anotação local
-html.txt
-
 # material interno do instrutor
-docs/
+specs/
