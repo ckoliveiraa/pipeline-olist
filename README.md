@@ -5,7 +5,7 @@ de ponta a ponta, do CSV ao dashboard, sobre vendas reais do e-commerce brasilei
 
 Este repositório guarda **só os dados**. O código você escreve durante as aulas.
 
-📖 **Guia do curso:** [ckoliveiraa.github.io/pipeline-olist](https://ckoliveiraa.github.io/pipeline-olist/guia-olist.html)
+📖 **Guia do curso:** [ckoliveiraa.github.io/pipeline-olist](https://ckoliveiraa.github.io/pipeline-olist/)
 — o roteiro das quatro aulas, publicado via GitHub Pages a partir de [`docs/`](docs/).
 
 ## O que tem aqui

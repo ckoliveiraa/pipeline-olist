@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Dez indicadores que o dado em `raw` permite calcular — e, para cada um, de que tabelas e colunas ele sai.
-        Nada de SQL: o desafio é de leitura, não de código. Enunciado completo no [guia do curso](https://ckoliveiraa.github.io/pipeline-olist/guia-olist.html#desafios).
+        Nada de SQL: o desafio é de leitura, não de código. Enunciado completo no [guia do curso](https://ckoliveiraa.github.io/pipeline-olist/aula-1.html#desafios).
 
         > ⚠️ Este repositório é público: a sua entrega fica visível para a turma. É de propósito — vamos ler em voz alta na correção.
 
