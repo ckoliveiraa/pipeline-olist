@@ -1156,12 +1156,19 @@ SPEC
    sys.exit(1). Motivo: mart vazio é quase sempre um JOIN que não casou,
    e um dashboard vazio parece um negócio parado.
    Se sql/marts/ não tiver nenhum arquivo: avisa e sys.exit(1).
+   Antes de executar qualquer SQL: arquivo sem prefixo NN_ ou dois
+   arquivos que dão o mesmo nome de tabela -&gt; lista quais e sys.exit(1).
+   Tudo roda numa transação só: se qualquer passo falhar (inclusive o
+   mart vazio), o schema marts volta a ser o da última execução que deu
+   certo. Motivo: um schema pela metade quebra o dashboard sem avisar.
 
 CRITÉRIOS DE ACEITE
 - Com um arquivo sql/marts/00_teste.sql contendo "SELECT 1 AS x", cria
   marts.teste com 1 linha.
 - Apagar o arquivo e rodar de novo faz marts.teste desaparecer.
-- Um arquivo com erro de sintaxe para tudo, com o nome do arquivo na tela.
+- Um arquivo com erro de sintaxe para tudo, com o nome do arquivo na tela,
+  e marts continua exatamente como estava antes da execução.
+- Um arquivo teste.sql, sem prefixo, para antes de executar qualquer SQL.
 - Rodar duas vezes seguidas imprime exatamente a mesma coisa.
 
 ENTREGA
@@ -1169,7 +1176,7 @@ ENTREGA
 2. O código, comentado só onde a decisão não é óbvia.
 3. Uma lista final do que você assumiu e que não estava na spec.</pre><button class="copy" type="button">copiar</button></div>
         <p>Teste com o arquivo do primeiro critério antes de olhar os seus marts: <code>marts.teste</code> aparece na lista junto com os cinco. Depois, apague o <code>00_teste.sql</code>.</p>
-        <div class="verify"><p class="vh">Confira</p><p>Os quatro critérios de aceite, um por um. O segundo é o que mais escapa: se <code>marts.teste</code> sobreviver ao arquivo apagado, o script não está recriando o schema.</p></div>
+        <div class="verify"><p class="vh">Confira</p><p>Os cinco critérios de aceite, um por um. O segundo é o que mais escapa: se <code>marts.teste</code> sobreviver ao arquivo apagado, o script não está recriando o schema.</p></div>
         <label class="mark"><input type="checkbox" id="chk-a3-s1"> Marcar como feito</label>
       </div>
     </article>
