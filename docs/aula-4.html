@@ -1425,82 +1425,31 @@ ENTREGA
   <section id="desafio">
     <h2>10 &middot; Para casa</h2>
     <p class="h2big">O desafio final: o seu pipeline, do zero</p>
-    <p>Quatro aulas construindo um pipeline sobre um dado que alguém escolheu para você. O desafio final é fazer tudo de novo com um dado que <strong>você</strong> escolhe: um dataset do Kaggle, do CSV ao dashboard, com Python, SQL, IA e git &mdash; do jeito que fizemos com a Olist. A regra de sempre vale em dobro: usa tudo o que foi dado, e o passo que não foi mostrado é o mais difícil de todos &mdash; decidir sozinho quais perguntas o dado responde e qual é o grão de cada uma.</p>
+    <p>Quatro aulas construindo um pipeline sobre um dado que alguém escolheu para você. O desafio final é fazer tudo de novo com um dado que <strong>você</strong> escolhe, do arquivo de origem até os indicadores, com Python, SQL, IA e git &mdash; do jeito que fizemos com a Olist. O passo que não foi mostrado é o mais difícil de todos: decidir sozinho quais perguntas o dado responde.</p>
 
-    <h3>Escolhendo o dataset</h3>
+    <h3>Os requisitos do projeto</h3>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Precisa ter</th><th>Por quê</th></tr></thead>
+        <thead><tr><th>Requisito</th><th>Como fica</th></tr></thead>
         <tbody>
-          <tr><td><b>Licença que permite uso</b> (CC0, CC BY, CC BY-NC&hellip;), escrita na página do dataset</td><td>O seu repositório é público. Dado sem licença clara não vai para o GitHub.</td></tr>
-          <tr><td><b>Duas tabelas ou mais</b>, ligadas por uma chave</td><td>Sem <code>JOIN</code> não tem grão para decidir, e sem grão o desafio vira um <code>GROUP BY</code>. Um arquivo único só serve se tiver uma entidade repetida que você separe em duas tabelas na transformação.</td></tr>
-          <tr><td><b>Uma coluna de data</b></td><td>Para o gráfico de linha e para a palavra fechada &ldquo;mês&rdquo;.</td></tr>
-          <tr><td><b>Pelo menos 10 mil linhas</b> na maior tabela</td><td>Com menos, todo erro de grão é visível a olho, e você não precisa contar.</td></tr>
-          <tr><td><b>Sujeira de verdade</b>: nulo, duplicata, texto que devia ser número</td><td>Dataset já limpo deixa a transformação sem nenhuma decisão &mdash; e a transformação é onde a spec mais ensina.</td></tr>
+          <tr><td><b>Fonte escolhida por você</b></td><td>Um dataset do Kaggle ou uma API pública, sobre um tema que você conhece. A Olist também vale, desde que feita de outro jeito: outras perguntas, outros indicadores e outras transformações &mdash; não o pipeline do curso copiado. Se for Kaggle, a licença precisa permitir uso público, porque o repositório é público.</td></tr>
+          <tr><td><b>Duas tabelas ou mais</b></td><td>Ligadas por uma chave, para existir pelo menos um <code>JOIN</code>. Não há mínimo de linhas.</td></tr>
+          <tr><td><b>Três camadas</b></td><td>Dado bruto, dado transformado e indicadores, cada camada separada da outra. Os nomes são seus: <code>raw</code>, <code>refined</code> e <code>marts</code> no curso; <code>bronze</code>, <code>silver</code> e <code>gold</code> ou qualquer outro serve, desde que a separação exista. Na camada bruta, nada é alterado.</td></tr>
+          <tr><td><b>Testes unitários</b></td><td>Testes com <code>pytest</code>, rodando com dado inventado e sem abrir o banco do projeto, como no passo 4.6.</td></tr>
+          <tr><td><b>Repositório público no GitHub pessoal</b></td><td>Na sua conta, não em conta de empresa nem em fork do repositório do curso.</td></tr>
+          <tr><td><b>Histórico de commits</b></td><td>O projeto construído aos poucos, com um commit por etapa e mensagem dizendo o que mudou &mdash; não o projeto inteiro em um commit só. O histórico é lido junto com o código: ele mostra a ordem em que as coisas aconteceram.</td></tr>
+          <tr><td><b>Dashboard</b> &middot; opcional</td><td>Se fizer, ele lê só da camada de indicadores, sem nenhum cálculo na tela, como o painel da seção 07.</td></tr>
         </tbody>
       </table>
-    </div>
-    <p class="small">Busque no Kaggle por um tema que você conhece &mdash; vendas, filmes, voos, saúde pública, futebol &mdash; e filtre por arquivos CSV. Conhecer o assunto é metade das perguntas boas. Não vale a Olist.</p>
-
-    <h3>As seis etapas, uma por aula</h3>
-    <div class="desafios">
-      <article class="desafio">
-        <div class="de-n"><b>F1</b>git</div>
-        <div>
-          <h3>Um repositório seu, desde o primeiro arquivo</h3>
-          <p>Repositório público no GitHub, criado antes de qualquer código. Pelo menos um commit por etapa, com mensagem dizendo o que mudou e por quê &mdash; não &ldquo;update&rdquo;. <code>.gitignore</code> para o <code>.duckdb</code> e para o CSV descompactado. Se o CSV passar de 50&nbsp;MB, versione comprimido em <code>.csv.gz</code>, como no repositório do curso.</p>
-          <p class="entrega-ex">Na correção, o histórico do git é lido junto com o código: ele mostra se a spec veio antes do código.</p>
-        </div>
-      </article>
-      <article class="desafio">
-        <div class="de-n"><b>F2</b>aula 1</div>
-        <div>
-          <h3>Ingestão: do arquivo para o schema raw</h3>
-          <p><code>pipeline/ingestao.py</code>, escrito pela IA a partir de uma spec sua, grava cada CSV no schema <code>raw</code> sem mudar nada: tudo <code>VARCHAR</code>, nenhuma linha a mais ou a menos. A tela imprime a contagem de cada tabela.</p>
-          <p class="entrega-ex">Para conferir: a contagem bate com a que o Kaggle mostra na página do dataset &mdash; e se não bater, o README diz por quê.</p>
-        </div>
-      </article>
-      <article class="desafio">
-        <div class="de-n"><b>F3</b>aula 2</div>
-        <div>
-          <h3>Transformação: cada decisão escrita</h3>
-          <p><code>specs/transformacao.md</code> com as sete decisões da aula 2 &mdash; escopo, nomes, tipos, conversão que falha, duplicatas, nulos, saída na tela &mdash; cada uma com o motivo. A IA escreve o <code>pipeline/transformacao.py</code>; a tela mostra o antes e o depois de cada tabela.</p>
-          <p class="entrega-ex">Para conferir: a lista &ldquo;o que eu assumi&rdquo; que a IA devolveu, e o que você mudou na spec por causa dela.</p>
-        </div>
-      </article>
-      <article class="desafio">
-        <div class="de-n"><b>F4</b>aula 3</div>
-        <div>
-          <h3>Cinco marts, cinco perguntas</h3>
-          <p>Antes do SQL, as palavras fechadas do <em>seu</em> dado, como &ldquo;pedido válido&rdquo;, &ldquo;receita&rdquo;, &ldquo;cliente&rdquo; e &ldquo;mês&rdquo; foram na Olist. Depois, pelo menos cinco arquivos em <code>sql/marts/</code>, cada um com a pergunta e o grão na primeira linha, e pelo menos um com <code>JOIN</code>, um com CTE e um com janela. O executor da aula 3 serve com um ajuste só na spec: a lista de tabelas que ele confere em <code>refined</code> antes de rodar.</p>
-          <p class="entrega-ex">Para conferir: dois marts que falam do mesmo total por caminhos diferentes, e a consulta mostrando que eles concordam.</p>
-        </div>
-      </article>
-      <article class="desafio">
-        <div class="de-n"><b>F5</b>aula 4</div>
-        <div>
-          <h3>O dashboard: rascunho primeiro</h3>
-          <p>O rascunho no Figma, no Canva ou no papel, com os números de verdade, salvo em <code>design/rascunho.png</code>. Depois o painel em Streamlit, com a spec da seção 07 adaptada: cartões no topo, pelo menos três gráficos, cada um dizendo de que mart lê, e nenhum cálculo na tela.</p>
-          <p class="entrega-ex">Para conferir: o teste dos cinco segundos com alguém que não conhece o seu dado. E a busca por <code>groupby</code>, <code>.sum(</code>, <code>.mean(</code> e <code>merge</code> no código do painel não encontra nada.</p>
-        </div>
-      </article>
-      <article class="desafio">
-        <div class="de-n"><b>F6</b>testes</div>
-        <div>
-          <h3>Testes unitários com 60% de coverage, e três regras de qualidade</h3>
-          <p>A spec do passo 4.6 adaptada ao seu projeto: testes unitários com dado inventado, <code>uv run pytest --cov</code> com 60% ou mais. E, separado deles, três regras de qualidade de dados escritas como consultas SQL sobre o seu dado real &mdash; chave única, domínio, dois totais que batem &mdash;, com o resultado de cada uma no README.</p>
-          <p class="entrega-ex">Para conferir: nenhum teste unitário abre o banco do projeto, e nenhuma regra de qualidade compara com um número fixo.</p>
-        </div>
-      </article>
     </div>
 
     <div class="note"><b>A IA entra em todas as etapas, e você confere todas.</b> O README termina com uma seção curta: em que etapa a IA errou ou assumiu algo que você não pediu, e como você descobriu &mdash; quase sempre contando linhas antes e depois. Um projeto em que a IA não errou nenhuma vez é um projeto em que ninguém conferiu.</div>
 
     <h3>O README</h3>
-    <p>É a primeira coisa que a correção abre. Cinco partes, nesta ordem: o dataset (link, licença, o que é uma linha de cada tabela); as perguntas que o dashboard responde; como rodar do zero, em comandos; um print do dashboard; e a seção sobre a IA. Quem clona o repositório tem que chegar ao dashboard de pé só lendo o README.</p>
+    <p>É a primeira coisa que a correção abre: a fonte do dado (link e, se for Kaggle, a licença); o que é uma linha de cada tabela; as três camadas e os indicadores que saem delas; como rodar do zero, em comandos, incluindo os testes; e a seção sobre a IA. Quem clona o repositório tem que chegar aos indicadores só lendo o README.</p>
 
-    <p class="small" style="margin-top:14px"><strong>Entrega:</strong> o link do repositório, pela forma combinada na aula. Projeto incompleto também se entrega: uma etapa travada com a dúvida escrita no README vale mais que seis copiadas.</p>
-    <p class="small" style="margin-top:14px">O critério principal é o do curso inteiro: cada número da tela tem um arquivo <code>.sql</code> de onde saiu, cada decisão sobre o dado tem um motivo escrito, e o histórico do git conta a ordem em que as coisas aconteceram.</p>
+    <p class="small" style="margin-top:14px"><strong>Entrega:</strong> o link do repositório, pela forma combinada na aula. Projeto incompleto também se entrega: uma etapa travada com a dúvida escrita no README vale mais que um projeto inteiro copiado.</p>
+    <p class="small" style="margin-top:14px">O critério principal é o do curso inteiro: cada indicador tem um arquivo <code>.sql</code> de onde saiu, cada decisão sobre o dado tem um motivo escrito, e o histórico do git conta a ordem em que as coisas aconteceram.</p>
   </section>
 
   <!-- ============ ANEXOS ============ -->
