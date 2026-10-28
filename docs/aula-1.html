@@ -824,7 +824,7 @@ rm -rf dados</pre><button class="copy" type="button">copiar</button></div>
 
   <section id="e1">
     <p class="h2big">Etapa 1 &mdash; Ingestão</p>
-    <p class="small" style="margin-top:-8px;margin-bottom:18px">Aula 1 &middot; <code>pipeline/ingestao.py</code></p>
+    <p class="small" style="margin-top:-8px;margin-bottom:18px">Aula 1 &middot; <code>pipeline/db.py</code> &middot; <code>pipeline/ingestao.py</code></p>
 
     <div class="spec">
       <p class="spec-h">Antes de escrever a primeira linha</p>
@@ -858,21 +858,54 @@ STACK
 - DuckDB como banco, arquivo olist.duckdb na raiz do projeto
 - Nenhum orquestrador. Script executável pela linha de comando.
 
-O QUE JÁ EXISTE (use, não reimplemente)
-pipeline/db.py expõe:
-  PASTA_RAW                          Path da pasta com os nove .csv.gz
+O QUE JÁ EXISTE
+Só a pasta raw/ com os nove .csv.gz e o pyproject.toml. Nenhum código ainda.
+
+ARTEFATOS A PRODUZIR, nesta ordem
+1. pipeline/db.py, o módulo de conexão que as quatro etapas do curso vão
+   importar (spec própria logo abaixo; é a primeira coisa a existir)
+2. pipeline/ingestao.py, executável com:
+     uv run python -m pipeline.ingestao
+3. ui.py, na raiz do projeto, executável com:
+     uv run python ui.py
+   (spec própria no fim deste prompt; ui.py e ingestao.py não se importam)
+
+SPEC DO pipeline/db.py (primeiro artefato)
+Expõe exatamente isto, com estes nomes:
+  PASTA_RAW                          Path da pasta raw/ com os nove .csv.gz
   conectar()                         abre o olist.duckdb, criando se faltar
   criar_schema(con, nome)            CREATE SCHEMA IF NOT EXISTS
   gravar(con, df, schema, tabela)    grava e devolve a contagem lida do banco
 
-ARTEFATOS A PRODUZIR
-1. pipeline/ingestao.py, executável com:
-     uv run python -m pipeline.ingestao
-2. ui.py, na raiz do projeto, executável com:
-     uv run python ui.py
-   (spec própria no fim deste prompt; são dois arquivos que não se importam)
+D1. CAMINHOS
+    PASTA_RAW e o olist.duckdb são resolvidos a partir da localização do
+    próprio db.py (a pasta acima de pipeline/), nunca do diretório corrente.
+    Motivo: rodar o script de outra pasta não pode criar um olist.duckdb
+    vazio no lugar errado, que parece ingestão quebrada.
+D2. TRÊS FUNÇÕES E UMA CONSTANTE, NADA MAIS
+    db.py não lê CSV, não conhece nome de tabela, não imprime nada e não
+    converte tipo. Quem decide tudo isso é cada etapa.
+    Motivo: as aulas 2, 3 e 4 importam este arquivo. Regra de negócio
+    escondida aqui vale para todas as etapas sem aparecer em nenhuma spec.
+D3. gravar
+    Recria a tabela (CREATE OR REPLACE TABLE schema.tabela) com as colunas
+    e os tipos do DataFrame, sem alterar nada: coluna str vira VARCHAR,
+    nulo continua NULL. Não deixa view ou tabela temporária para trás.
+    Devolve SELECT count(*) da tabela recém-gravada, lido do banco.
+    Motivo: a contagem que aparece na tela tem que ser a do que foi
+    gravado, não a do que estava na memória.
+D4. CONEXÃO
+    conectar() devolve a conexão aberta; quem chama é quem fecha.
+    db.py não guarda conexão global.
 
-SPEC
+CRITÉRIOS DE ACEITE (db.py)
+- Importar pipeline.db não abre banco nem cria arquivo nenhum.
+- conectar() chamado de dentro de outra pasta cria o olist.duckdb na raiz
+  do projeto, e não na pasta corrente.
+- gravar() com um DataFrame de 3 linhas devolve 3, e rodar duas vezes
+  continua devolvendo 3.
+
+SPEC DA INGESTÃO (segundo artefato)
 
 1. ESCOPO E NOMES
    Schema de destino: raw
@@ -936,7 +969,7 @@ CRITÉRIOS DE ACEITE (ingestão)
   tabela.
 - O script termina sozinho e devolve o terminal: nenhum processo fica de pé.
 
-SPEC DO ui.py (segundo artefato)
+SPEC DO ui.py (terceiro artefato)
 Quero explorar o banco pelo navegador, em vez de ler tabela no terminal.
 
 U1. O QUE FAZ
@@ -970,7 +1003,7 @@ CRITÉRIOS DE ACEITE (ui.py)
 - Renomear olist.duckdb faz o ui.py parar com a mensagem, sem criar arquivo
   novo.
 
-ENTREGA, nesta ordem, para cada um dos dois arquivos
+ENTREGA, nesta ordem, para cada um dos três arquivos
 1. A spec como docstring no topo do arquivo, dizendo por que cada regra
    existe — não só o que ela manda fazer.
 2. O código, com comentários apenas onde a decisão não é óbvia pelo código.
